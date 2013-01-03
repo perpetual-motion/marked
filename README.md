@@ -10,6 +10,8 @@ This version incorporates the following changes:
     - use of the pygments.appspot.com syntax highlighter
     - pluggable interface for adding your own markdown tags
 
+**FYI**: The regular `marked` function is still available, but an async highlighter won't work with it
+
 ## Install
 
 ``` bash
@@ -26,7 +28,7 @@ marked has 4 different switches which change behavior.
 - __gfm__: Enable github flavored markdown (enabled by default).
 - __sanitize__: Sanitize the output. Ignore any HTML that has been input.
 - __highlight__: A callback to highlight code blocks.
-- __blocks__: A collection of block handlers
+- __blocks__: A collection of block handlers 
 - __inlines__: A collection of inline handlers
 
 
@@ -50,6 +52,33 @@ or from the command line:
 
 `marked -o output.html src.md `
 
+## Advanced Usage
+
+The options for `blocks` and `inlines` let you smuggle more operations into the markdown transformation.
+
+Both are essentially glorified search/replace options, `blocks` only operate at a block level, whereas `inlines` modify content inline.
+
+``` javascript 
+marked.setOptions({
+  gfm: true,
+  pedantic: false,
+  sanitize: false,
+  inlines: {
+        // you can add one or more search/replace operations here.
+        youtube: {
+            search: / *\[([^\:\]]+):([^\]]+)\] *\n*/,
+            replace: function (capture, tag, data) {
+                if (tag == 'youtube') {
+                    return '<iframe class="youtube" src="https://www.youtube.com/embed/' + data + '"></iframe>'
+                }
+                return 'undefined:' + tag;
+            }
+        }
+    },
+    blocks: 
+});
+
+```
 
 ## Benchmarks
 
