@@ -74,8 +74,7 @@ marked.setOptions({
                 return 'undefined:' + tag;
             }
         }
-    },
-    blocks: 
+    }
 });
 
 ```
