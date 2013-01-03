@@ -1,7 +1,55 @@
 # marked
+>> forked from https://github.com/chjj/marked
 
 A full-featured markdown parser and compiler, written in javascript.
 Built for speed.
+
+This version incorporates the following changes:
+    
+    - Async support 
+    - use of the pygments.appspot.com syntax highlighter
+    - pluggable interface for adding your own markdown tags
+
+## Install
+
+``` bash
+$ npm install git://github.com/perpetual-motion/marked.git
+```
+
+
+## Options
+
+marked has 4 different switches which change behavior.
+
+- __pedantic__: Conform to obscure parts of `markdown.pl` as much as possible.
+  Don't fix any of the original markdown bugs or poor behavior.
+- __gfm__: Enable github flavored markdown (enabled by default).
+- __sanitize__: Sanitize the output. Ignore any HTML that has been input.
+- __highlight__: A callback to highlight code blocks.
+- __blocks__: A collection of block handlers
+- __inlines__: A collection of inline handlers
+
+
+## Usage
+
+``` js
+// Set default options
+marked.setOptions({
+  gfm: true,
+  pedantic: false,
+  sanitize: false,
+});
+
+marked.async('i am using __markdown__.', function(err, markedContent) {
+    console.log(markedContent + '\n');
+});
+
+```
+
+or from the command line:
+
+`marked -o output.html src.md `
+
 
 ## Benchmarks
 
@@ -34,11 +82,6 @@ For those feeling skeptical: These benchmarks run the entire markdown test suite
 1000 times. The test suite tests every feature. It doesn't cater to specific
 aspects.
 
-## Install
-
-``` bash
-$ npm install marked
-```
 
 ## Another Javascript Markdown Parser
 
@@ -60,66 +103,11 @@ disadvantage in the benchmarks above.
 Along with implementing every markdown feature, marked also implements
 [GFM features](http://github.github.com/github-flavored-markdown/).
 
-## Options
-
-marked has 4 different switches which change behavior.
-
-- __pedantic__: Conform to obscure parts of `markdown.pl` as much as possible.
-  Don't fix any of the original markdown bugs or poor behavior.
-- __gfm__: Enable github flavored markdown (enabled by default).
-- __sanitize__: Sanitize the output. Ignore any HTML that has been input.
-- __highlight__: A callback to highlight code blocks.
-
 None of the above are mutually exclusive/inclusive.
-
-## Usage
-
-``` js
-// Set default options
-marked.setOptions({
-  gfm: true,
-  pedantic: false,
-  sanitize: true,
-  // callback for code highlighter
-  highlight: function(code, lang) {
-    if (lang === 'js') {
-      return javascriptHighlighter(code);
-    }
-    return code;
-  }
-});
-console.log(marked('i am using __markdown__.'));
-```
-
-You also have direct access to the lexer and parser if you so desire.
-
-``` js
-var tokens = marked.lexer(text);
-console.log(marked.parser(tokens));
-```
-
-``` bash
-$ node
-> require('marked').lexer('> i am using marked.')
-[ { type: 'blockquote_start' },
-  { type: 'paragraph',
-    text: 'i am using marked.' },
-  { type: 'blockquote_end' },
-  links: {} ]
-```
-
-## CLI
-
-``` bash
-$ marked -o hello.html
-hello world
-^D
-$ cat hello.html
-<p>hello world</p>
-```
 
 ## License
 
 Copyright (c) 2011-2012, Christopher Jeffrey. (MIT License)
+Changes Copyright (c) 2013, Garrett Serack. (MIT License)
 
 See LICENSE for more info.

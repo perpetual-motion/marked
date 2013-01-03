@@ -7,6 +7,7 @@
 
 var fs = require('fs')
   , util = require('util')
+  , path = require('path')
   , marked = require('../');
 
 /**
@@ -39,7 +40,7 @@ var main = function(argv) {
     , input
     , output
     , arg
-    , tokens;
+    ;
 
   var getarg = function() {
     var arg = argv.shift();
@@ -60,19 +61,6 @@ var main = function(argv) {
       case '-i':
       case '--input':
         input = argv.shift();
-        break;
-      case '-t':
-      case '--tokens':
-        tokens = true;
-        break;
-      case '--gfm':
-        options.gfm = true;
-        break;
-      case '--sanitize':
-        options.sanitize = true;
-        break;
-      case '--pedantic':
-        options.pedantic = true;
         break;
       case '-h':
       case '--help':
@@ -105,17 +93,20 @@ var main = function(argv) {
   write();
 
   function write() {
-    marked.setOptions(options);
+    marked.setOptions({
+        gfm: true,
+        pedantic : false,
+        sanitize : false
+    });
+    
+    marked.async(data, function(err, markedContent) {
+      if (!output) {
+        process.stdout.write(markedContent + '\n');
+        } else {
+        fs.writeFileSync(output, markedContent );
+      }
+    });
 
-    data = tokens
-      ? JSON.stringify(marked.lexer(data), null, 2)
-      : marked(data);
-
-    if (!output) {
-      process.stdout.write(data + '\n');
-    } else {
-      fs.writeFileSync(output, data);
-    }
   }
 };
 
